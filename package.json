@@ -1,0 +1,14 @@
+{
+  "name": "mavsbot",
+  "version": "1.0.0",
+  "description": "Discord bot for mavericks reddit",
+  "main": "mavsbot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Kyle Rump",
+  "license": "ISC",
+  "dependencies": {
+    "discord.js": "^12.5.1"
+  }
+}
