@@ -1,4 +1,6 @@
 {
 	"prefix": "!",
-	"token": "Your token here"
+	"token": "Your discord bot token here",
+	"dbString": "postgres://user:pass@example.com:5432/dbname",
+	"homeTeam": "mavericks"
 }

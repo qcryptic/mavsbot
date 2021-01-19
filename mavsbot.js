@@ -1,7 +1,10 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const {prefix, token} = require('./config.json');
+const { prefix, token } = require('./config.json');
+const db = require('./src/database');
 const client = new Discord.Client();
+const daily = require('./src/service/dailyInfo.service');
+const teams = require('./src/service/teams.service');
 
 // Load command files
 client.commands = new Discord.Collection();
@@ -13,7 +16,7 @@ for (const file of commandFiles) {
 
 // On bot startup
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged into Discord as ${client.user.tag}!`);
 });
 
 // On message recieved
@@ -29,10 +32,25 @@ client.on('message', message => {
 			client.commands.get(command).execute(message, args);
 		} catch (error) {
 			console.error(error);
-			message.reply('there was an error trying to execute that command!');
+			message.reply('Error trying to execute that command!');
 		}
 	}
 });
 
-// Start bot
-client.login(token);
+// Startup sequence: Start database => sync models => log into bot
+(async () => {
+    try {
+			await db.authenticate();
+			console.log('Database connection successful');
+			await db.sync({ logging: false, force: true });
+			console.log('Database models synced');
+		} catch (error) {
+			console.error('Database error: ', error);
+			process.exit(0);
+		}
+
+		await daily.setDailyInfo();
+		await teams.updateTeams();
+
+		client.login(token);
+})();
