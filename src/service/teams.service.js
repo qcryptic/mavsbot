@@ -38,10 +38,10 @@ module.exports = {
 			process.exit(0);
 		}
 
-		await db.models.team.destroy({ where: {}, truncate: true });
+		await db.models.team.destroy({ where: {}, truncate: true })
+			.catch((err) => { console.log(err) });
 		await db.models.team.bulkCreate(teamList)
 			.catch((err) => { console.log(err) });
-		
 		console.log(`Teams updated [Home team set to ${global.team.name}]`);
 	}
 

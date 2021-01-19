@@ -5,6 +5,7 @@ const db = require('./src/database');
 const client = new Discord.Client();
 const daily = require('./src/service/dailyInfo.service');
 const teams = require('./src/service/teams.service');
+const schedule = require('./src/service/schedule.service');
 
 // Load command files
 client.commands = new Discord.Collection();
@@ -37,20 +38,24 @@ client.on('message', message => {
 	}
 });
 
-// Startup sequence: Start database => sync models => log into bot
+// Startup sequence
 (async () => {
+		// Check database connection and sync models
     try {
 			await db.authenticate();
 			console.log('Database connection successful');
-			await db.sync({ logging: false, force: true });
+			await db.sync({ force: true });
 			console.log('Database models synced');
 		} catch (error) {
 			console.error('Database error: ', error);
 			process.exit(0);
 		}
 
+		// Grab and store essential NBA info for bot to function correctly
 		await daily.setDailyInfo();
 		await teams.updateTeams();
+		await schedule.updateSchedule();
 
+		// Start discord bot
 		client.login(token);
 })();
