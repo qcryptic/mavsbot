@@ -1,4 +1,4 @@
-const { tokenName } = require('../../config.json');
+const { tokenName, bettingChannel } = require('../../config.json');
 const bettingSvc = require('../service/betting.service');
 const { getUser } = require('../service/user.service');
 
@@ -6,16 +6,19 @@ module.exports = {
 	name: 'bet',
 	description: 'See betting odds, or place a bet',
 	execute: function(message, args) {
-		if (bettingSvc.areBetsOpen()) {
-			if (args[0] === 'odds' || args[0] === 'line') {
+		if (message.channel.id !== bettingChannel) {
+			message.channel.send(`${message.author} Betting commands only available in <#${bettingChannel}>`);
+		}
+		else if (args[0] && (args[0] === 'log' || args[0] === 'open' || args[0] === 'history')) {
+			sendPlacedBets(message);
+		}
+		else if (bettingSvc.areBetsOpen()) {
+			if (args[0] === 'odds' || args[0] === 'line') 
 				message.channel.send(bettingSvc.getBettingLineEmbed());
-			}
-			else if ((args[0] === 'win' || args[0] === 'lose') && args.length === 2 && /^\d+$/.test(args[1])) {
+			else if ((args[0] === 'win' || args[0] === 'lose') && args.length === 2 && /^\d+$/.test(args[1])) 
 				createBet(message, args);
-			}
-			else {
+			else 
 				showCommandOptions(message);
-			}
 		}
 		else {
 			message.channel.send('No bet is currently running. The tables open 1 hour before game time and close at game start.');
@@ -25,6 +28,10 @@ module.exports = {
 
 function showCommandOptions(message) {
 	message.channel.send(`${message.author}, please use **!bet odds** to see odds or **!bet <win|lose> <amount>** to place a bet`);
+}
+
+function sendPlacedBets(message) {
+	message.channel.send('Not implemented yet - Will show your currently open bets')
 }
 
 async function createBet(message, args) {

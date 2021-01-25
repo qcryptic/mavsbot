@@ -5,5 +5,8 @@
 	"homeTeam": "mavericks",
 	"theOddsApiKey": "api ket from theOddsApi",
 	"tokenName": "MavsBucks",
-	"resourceUrl": ""
+	"resourceUrl": "Resource URL to publically available pics used by bot",
+	"mainChannel": "main channel id",
+	"bettingChannel": "betting channel id",
+	"notificationRole": "role id for game notifications"
 }
