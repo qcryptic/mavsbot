@@ -11,4 +11,8 @@ for (const model of modelFiles) {
 	require(`./models/${model}`)(sequelize);
 }
 
+// Extra setup
+sequelize.models.team.hasMany(sequelize.models.game, {foreignKey: 'id'});
+sequelize.models.game.belongsTo(sequelize.models.team, {foreignKey: 'opponentId'});
+
 module.exports = sequelize;

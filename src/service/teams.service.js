@@ -1,6 +1,6 @@
 const { teams } = require('../enum/endpoints');
 const { homeTeam } = require('../../config.json');
-const db = require('../database');
+const db = require('../database').models;
 const axios = require('axios');
 
 module.exports = {
@@ -28,7 +28,8 @@ module.exports = {
 					urlName: team.urlName,
 					id: team.teamId,
 					name: team.nickname,
-					code: team.tricode
+					code: team.tricode,
+					fullName: team.fullName
 				}
 			}
 		});
@@ -38,11 +39,15 @@ module.exports = {
 			process.exit(0);
 		}
 
-		await db.models.team.destroy({ where: {}, truncate: true })
-			.catch((err) => { console.log(err) });
-		await db.models.team.bulkCreate(teamList)
-			.catch((err) => { console.log(err) });
+		// await db.team.destroy({ where: {}, truncate: { cascade: true } })
+		// 	.catch((err) => { console.log(err) });
+		// await db.team.bulkCreate(teamList)
+		// 	.catch((err) => { console.log(err) });
 		console.log(`Teams updated [Home team set to ${global.team.name}]`);
+	},
+
+	getTeamById: function(teamId) {
+		return db.team.findAll({where: { id: teamId }});
 	}
 
 };

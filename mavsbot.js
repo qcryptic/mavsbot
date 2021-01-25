@@ -6,6 +6,9 @@ const client = new Discord.Client();
 const daily = require('./src/service/dailyInfo.service');
 const teams = require('./src/service/teams.service');
 const schedule = require('./src/service/schedule.service');
+const bets = require('./src/service/betting.service');
+const boxscore = require('./src/service/boxscore.service');
+require('./src/service/cron.service');
 
 // Load command files
 client.commands = new Discord.Collection();
@@ -16,8 +19,37 @@ for (const file of commandFiles) {
 }
 
 // On bot startup
-client.on('ready', () => {
-  console.log(`Logged into Discord as ${client.user.tag}!`);
+client.on('ready', async () => {
+	console.log(`Logged into Discord as ${client.user.tag}!`);
+	global.client = client;
+
+	// Check database connection and sync models
+	try {
+		await db.authenticate();
+		console.log('Database connection successful');
+		await db.sync({ force: false });
+		console.log('Database models synced');
+	} catch (error) {
+		console.error('Database error: ', error);
+		process.exit(0);
+	}
+
+	// Grab and store essential NBA info for bot to function correctly
+	await daily.setDailyInfo();
+	await teams.updateTeams();
+	await schedule.updateSchedule();
+	const games = schedule.getRelevantGameInfo();
+	let nextGame = await boxscore.getMiniBoxscore(games.next.id, games.next.date);
+	if (nextGame.statusNum === 2) {
+		console.log('A game is playing right now! Updating variables as needed');
+    await schedule.markGameAsPlayed(nextGame.gameId);
+		await schedule.updateRelevantGameInfo();
+		schedule.setIsGameActive(true);
+	}
+	boxscore.getBoxscore(games.last.id, games.last.date);
+	bets.resetBettingLine();
+	bets.payoutAllBets();
+	console.log(`\nBot is now fully operational`);
 });
 
 // On message recieved
@@ -38,24 +70,4 @@ client.on('message', message => {
 	}
 });
 
-// Startup sequence
-(async () => {
-		// Check database connection and sync models
-    try {
-			await db.authenticate();
-			console.log('Database connection successful');
-			await db.sync({ force: true });
-			console.log('Database models synced');
-		} catch (error) {
-			console.error('Database error: ', error);
-			process.exit(0);
-		}
-
-		// Grab and store essential NBA info for bot to function correctly
-		await daily.setDailyInfo();
-		await teams.updateTeams();
-		await schedule.updateSchedule();
-
-		// Start discord bot
-		client.login(token);
-})();
+client.login(token);

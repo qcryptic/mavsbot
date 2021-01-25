@@ -2,5 +2,8 @@
 	"prefix": "!",
 	"token": "Your discord bot token here",
 	"dbString": "postgres://user:pass@example.com:5432/dbname",
-	"homeTeam": "mavericks"
+	"homeTeam": "mavericks",
+	"theOddsApiKey": "api ket from theOddsApi",
+	"tokenName": "MavsBucks",
+	"resourceUrl": ""
 }

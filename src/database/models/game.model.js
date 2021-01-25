@@ -11,11 +11,11 @@ module.exports = (sequelize) => {
 			allowNull: false,
 			type: DataTypes.INTEGER,
 		},
-		homeTeamId: {
+		homeId: {
 			allowNull: false,
 			type: DataTypes.STRING,
 		},
-    visitorTeamId: {
+    opponentId: {
 			allowNull: false,
 			type: DataTypes.STRING,
     },
@@ -25,7 +25,7 @@ module.exports = (sequelize) => {
     },
     dateCode: {
 			allowNull: false,
-			type: DataTypes.STRING,
+			type: DataTypes.INTEGER,
     },
     statusNum: {
 			allowNull: false,
