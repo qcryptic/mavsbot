@@ -1,4 +1,12 @@
 {
 	"prefix": "!",
-	"token": "Your token here"
+	"token": "Your discord bot token here",
+	"dbString": "postgres://user:pass@example.com:5432/dbname",
+	"homeTeam": "mavericks",
+	"theOddsApiKey": "api ket from theOddsApi",
+	"tokenName": "MavsBucks",
+	"resourceUrl": "Resource URL to publically available pics used by bot",
+	"mainChannel": "main channel id",
+	"bettingChannel": "betting channel id",
+	"notificationRole": "role id for game notifications"
 }
