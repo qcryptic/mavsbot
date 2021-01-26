@@ -1,4 +1,5 @@
 const { miniBoxscore, boxscore } = require('../enum/endpoints');
+const moment = require('moment');
 const axios = require('axios');
 
 var score;
@@ -38,18 +39,15 @@ module.exports = {
   },
 
   getBoxScoreMessage: function(stats) {
-    let boxscoreType = '';
     if (!Array.isArray(stats)) {
       if (stats === 'default') {
         stats = ['point', 'assist', 'rebound', 'steal', 'block', 'turnover', 'foul', 'percentage'];
       }
       else if (stats === 'extra') {
         stats = ['paint', 'turnover_points', 'fast_break', 'second_chance', 'biggest_lead', 'run', 'timeout'];
-        boxscoreType = 'Extra ';
       }
       else if (stats === 'extended') {
         stats = ['point', 'assist', 'rebound', 'steal', 'block', 'turnover', 'foul', 'percentage', 'paint', 'turnover_points', 'fast_break', 'second_chance', 'biggest_lead', 'run', 'timeout'];
-        boxscoreType = 'Extended ';
       }
     }
 
@@ -72,7 +70,7 @@ module.exports = {
     if (scoreString === '')
       return scoreString;
     
-    return `**${getMatchupString()} ${boxscoreType}Boxscore** - *${getTimeRemaining()}*\`\`\`ruby\n${scoreString}\n\`\`\``;
+    return `${getMatchupString()} Boxscore - ${getTimeRemaining()}\`\`\`ruby\n${scoreString}\n\`\`\``;
   },
 
   getLeaders: function() {
@@ -85,10 +83,11 @@ function getMatchupString() {
 }
 
 function getTimeRemaining() {
-  if (score.info.endTimeUTC) 
-    return "Final";
+  if (score.info.endTimeUTC) {
+    return `**FINAL [${moment(score.info.startTimeUTC).format("MMM Do")}]**`;
+  }
   const { current, isEndOfPeriod } = score.info.period;
-  return (isEndOfPeriod) ? `End ${current}Q` : `${current}Q-${score.info.clock}`;
+  return (isEndOfPeriod) ? `**LIVE ${current}Q-END**` : `**LIVE ${current}Q-${score.info.clock}**`;
 }
 
 function resolve(obj, path){

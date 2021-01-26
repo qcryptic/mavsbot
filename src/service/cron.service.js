@@ -63,8 +63,6 @@ cron.schedule('*/15 * * * *', async function() {
     gameTime = moment(gameInfo.startTimeUTC);
   }
 
-  sendGameNotification(gameInfo);
-
   // Send betting and game notifications (betting opens 1 hour before games)
   const minutesToGame = gameTime.diff(moment(), 'minutes');
   if (minutesToGame <= 0 && minutesToGame > -5) {
