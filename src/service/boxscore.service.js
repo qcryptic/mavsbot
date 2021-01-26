@@ -31,14 +31,18 @@ module.exports = {
       refs += official.firstNameLastName + ', ';
     });
     if (refs === '') {
-      return `No refs found for ${getMatchupString()}, try again a bit later.`;
+      return `No refs found for ${getMatchupString()} yet, try again a bit later.`;
     }
     else {
-      return `Refs for ${getMatchupString()}:\n${refs.slice(0, -2)}`
+      return `Refs for **${getMatchupString()}**:\n${refs.slice(0, -2)}`
     }
   },
 
   getBoxScoreMessage: function(stats) {
+    let timeRemaining = getTimeRemaining();
+    if (timeRemaining === 'TIPPING OFF SOON') 
+      return `${getMatchupString()} Boxscore - ${timeRemaining}\n\`\`\`No stats yet, try again after tipoff\`\`\``;
+
     if (!Array.isArray(stats)) {
       if (stats === 'default') {
         stats = ['point', 'assist', 'rebound', 'steal', 'block', 'turnover', 'foul', 'percentage'];
@@ -70,7 +74,7 @@ module.exports = {
     if (scoreString === '')
       return scoreString;
     
-    return `${getMatchupString()} Boxscore - ${getTimeRemaining()}\`\`\`ruby\n${scoreString}\n\`\`\``;
+    return `${getMatchupString()} Boxscore - ${timeRemaining}\`\`\`c\n${scoreString}\n\`\`\``;
   },
 
   getLeaders: function() {
@@ -85,6 +89,9 @@ function getMatchupString() {
 function getTimeRemaining() {
   if (score.info.endTimeUTC) {
     return `**FINAL [${moment(score.info.startTimeUTC).format("MMM Do")}]**`;
+  }
+  if (score.info.clock === "" && score.info.period.current === 0) {
+    return `TIPPING OFF SOON`
   }
   const { current, isEndOfPeriod } = score.info.period;
   return (isEndOfPeriod) ? `**LIVE ${current}Q-END**` : `**LIVE ${current}Q-${score.info.clock}**`;

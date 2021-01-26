@@ -17,7 +17,7 @@ module.exports = {
         const role = guild.roles.cache.get(notificationRole);
         sentMsg.react('✅').then(() => sentMsg.react('❌'));
         let filter = (react, user) => { return react.emoji.name === '✅' || react.emoji.name === '❌' };
-        sentMsg.awaitReactions(filter, { time: 180000 })
+        sentMsg.awaitReactions(filter, { time: 120000 })
           .then(collected => {
             collected.each(item => {
               let userList = item.users.cache
